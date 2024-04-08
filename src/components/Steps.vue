@@ -1,24 +1,30 @@
 <template>
-  <div class="v-steps">
+  <div class="v-steps" :class="{'step-center': stepLength < stepNumber}">
     <div
       v-for="(item, index) in data"
       :key="index"
       class="v-step"
+      :style="handleStepStyle(index)"
       :class="getStatusClass(index)"
     >
       <div class="v-step-head">
         <div class="v-step-icon is-text">
-          <i v-if="isSuccess(index)" class="el-icon-check"></i>
+          <i v-if="isSuccess(index)" class="el-icon-check" />
           <span v-else>{{ index + 1 }}</span>
         </div>
-        <div v-show="straightLineDisplay(index)" class="v-step-line"></div>
+        <div v-show="straightLineDisplay(index)" class="v-step-line" />
         <div
           v-show="circleLineDisplay(index)"
           :class="getCircleClass(index)"
-        ></div>
+        />
       </div>
       <div class="v-step-main">
-        <div class="v-step-title is-success">12321</div>
+        <div class="v-step-title is-success">
+          {{ item.title }}
+        </div>
+        <div class="v-step-description" :title="item.description">
+          {{ item.description }}
+        </div>
       </div>
     </div>
   </div>
@@ -26,227 +32,121 @@
 
 <script>
 export default {
-  name: 'vSteps',
+  name: 'VSteps',
   props: {
     active: {
       type: Number,
-      default: 5
+      default: 0
     },
     data: {
       type: Array,
-      default: () => [
-        {
-          title: '213',
-          description: '12312'
-        },
-        {
-          title: '213',
-          description: '12312'
-        },
-        {
-          title: '213',
-          description: '12312'
-        },
-        {
-          title: '213',
-          description: '12312'
-        },
-        {
-          title: '213',
-          description: '12312'
-        },
-        {
-          title: '213',
-          description: '12312'
-        },
-        {
-          title: '213',
-          description: '12312'
-        },
-        {
-          title: '213',
-          description: '12312'
-        },
-        {
-          title: '213',
-          description: '12312'
-        },
-        {
-          title: '213',
-          description: '12312'
-        },
-        {
-          title: '213',
-          description: '12312'
-        },
-        {
-          title: '213',
-          description: '12312'
-        },
-        {
-          title: '213',
-          description: '12312'
-        },
-        {
-          title: '213',
-          description: '12312'
-        },
-        {
-          title: '213',
-          description: '12312'
-        },
-        {
-          title: '213',
-          description: '12312'
-        },
-        {
-          title: '213',
-          description: '12312'
-        },
-        {
-          title: '213',
-          description: '12312'
-        },
-        {
-          title: '213',
-          description: '12312'
-        },
-        {
-          title: '213',
-          description: '12312'
-        },
-        {
-          title: '213',
-          description: '12312'
-        },
-        {
-          title: '213',
-          description: '12312'
-        },
-        {
-          title: '213',
-          description: '12312'
-        },
-        {
-          title: '213',
-          description: '12312'
-        },
-        {
-          title: '213',
-          description: '12312'
-        },
-        {
-          title: '213',
-          description: '12312'
-        },
-        {
-          title: '213',
-          description: '12312'
-        },
-        {
-          title: '213',
-          description: '12312'
-        },
-        {
-          title: '213',
-          description: '12312'
-        },
-        {
-          title: '213',
-          description: '12312'
-        },
-      ]
+      default: () => []
+    },
+    stepNumber: {
+      type: Number,
+      default: 5
+    }
+  },
+  computed: {
+    stepLength(){
+      return this.data.length
     }
   },
   methods: {
     straightLineDisplay(index) {
-      const actualIndex = index + 1;
-      if (actualIndex === this.data.length && actualIndex < 6){
+      const actualIndex = index + 1
+      if (actualIndex === this.data.length && actualIndex < this.stepNumber) {
         return false
       }
-      if (actualIndex < 6) {
-        return true;
+      if (actualIndex < this.stepNumber) {
+        return true
       }
       // 奇数行最后一项
-      if (actualIndex % 6 === 0 && (actualIndex / 6) % 2 > 0) {
-        return false;
-      }
-      // 偶数反向行第一项
-      if (actualIndex % 6 === 1 && Math.floor(actualIndex / 6) % 2 > 0) {
-        return false;
-      }
-      // 最后一项且该行是正向
-      if (Math.ceil(actualIndex / 6) % 2 > 0 && actualIndex === this.data.length){
+      if (actualIndex % this.stepNumber === 0 && (actualIndex / this.stepNumber) % 2 > 0) {
         return false
       }
-      return true;
-      // return actualIndex < 5 || actualIndex % 6 !== 0
+      // 偶数反向行第一项
+      if (actualIndex % this.stepNumber === 1 && Math.floor(actualIndex / this.stepNumber) % 2 > 0) {
+        return false
+      }
+      // 最后一项且该行是正向
+      if (
+        Math.ceil(actualIndex / this.stepNumber) % 2 > 0
+        && actualIndex === this.data.length
+      ) {
+        return false
+      }
+      return true
     },
 
     circleLineDisplay(index) {
-      const actualIndex = index + 1;
-      if (actualIndex < 6 || actualIndex === this.data.length) {
-        return false;
+      const actualIndex = index + 1
+      if (actualIndex < this.stepNumber || actualIndex === this.data.length) {
+        return false
       }
       // 整数倍
-      if (actualIndex % 6 === 0) {
-        return true;
+      if (actualIndex % this.stepNumber === 0) {
+        return true
       }
-      return false;
+      return false
     },
 
     getCircleClass(index) {
-      const actualIndex = index + 1;
-      if (actualIndex % 6 === 0 && (actualIndex / 6) % 2 > 0) {
-        return 'right-circle';
+      const actualIndex = index + 1
+      if (actualIndex % this.stepNumber === 0 && (actualIndex / this.stepNumber) % 2 > 0) {
+        return 'right-circle'
       }
-      return 'left-circle';
+      return 'left-circle'
     },
 
     isSuccess(index) {
-      const actualIndex = index + 1;
+      const actualIndex = index + 1
       if (actualIndex < this.active) {
-        return true;
+        return true
       }
-      return false;
+      return false
     },
 
     getStatusClass(index) {
-      const actualIndex = index + 1;
+      const actualIndex = index + 1
       if (actualIndex < this.active) {
-        return 'is-success';
+        return 'is-success'
       }
       if (actualIndex === this.active) {
-        return 'is-process';
+        return 'is-process'
       }
-      return 'is-wait';
+      return 'is-wait'
+    },
+
+    handleStepStyle(index){
+      const styleObj = {}
+      if (Math.floor((index / this.stepNumber)) % 2 === 0){
+        styleObj.order = index
+      } else {
+        styleObj.float = 'right'
+      }
+
+      if (index > this.stepNumber - 1){
+        styleObj.marginTop = '23px'
+      }
+      styleObj.width = `${1 / this.stepNumber * 100}%`
+      return styleObj
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
 .v-steps {
-  width: 520px;
-  margin-top: 50px;
+  overflow: hidden;
+  width: 100%;
+
   .v-step {
     display: inline-flex;
-    flex-direction: column;
     align-items: center;
-    width: 16.66%;
-    flex-grow: 1;
     float: left;
-
-    @for $i from 0 through 150 {
-      &:nth-child(#{$i + 1}) {
-        @if floor($i / 6) % 2 == 0 {
-          order: #{$i};
-        } @else {
-          // order: #{$i + (2 - ($i % 6)) * 2};
-          float: right;
-        }
-      }
-    }
+    flex-direction: column;
+    flex-grow: 1;
 
     &-head {
       position: relative;
@@ -258,26 +158,27 @@ export default {
     &-line {
       position: absolute;
       top: 50%;
-      left: 50%;
       right: -50%;
+      left: 50%;
       width: 100%;
       height: 1px;
-      background-color: #c6cacd;
+      background-color: $--color-text-placeholder;
     }
 
     &-icon {
       position: relative;
+      z-index: 1;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
+      border: 1px solid $--color-text-placeholder;
+      border-radius: 50%;
       width: 19px;
       height: 19px;
       font-size: 12px;
+
       // text-align: center;
-      color: #c6cacd;
-      border: 1px solid #c6cacd;
-      border-radius: 50%;
-      z-index: 1;
+      color: $--color-text-placeholder;
       background-color: #fff;
 
       &::before,
@@ -299,59 +200,81 @@ export default {
       }
     }
 
+    &-main {
+      width: 100%;
+    }
+
     &-title {
-      line-height: 38px;
+      // line-height: 38px;
+      margin: 10px 0 3px;
+      width: 100%;
+      text-align: center;
+    }
+
+    &-description {
+      overflow: hidden;
+      width: 100%;
+      font-size: 12px;
+      text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      padding: 0 5px;
     }
 
     .right-circle {
       position: absolute;
       top: 10px;
-      left: 50%;
-      width: 50px;
-      height: 80px;
-      border: 1px solid #c6cacd;
-      border-radius: 0 100% 100% 0/50%;
+      left: 48%;
+      border: 1px solid $--color-text-placeholder;
       border-left: none;
+      border-radius: 0 100% 100% 0 / 50%;
+      width: 50%;
+      height: 90px;
     }
 
     .left-circle {
       position: absolute;
       top: 10px;
-      left: -20%;
-      width: 50px;
-      height: 80px;
-      border: 1px solid #c6cacd;
-      border-radius: 100% 0 0 100%/50%;
+      left: 5px;
+      border: 1px solid $--color-text-placeholder;
       border-right: none;
-    }
-
-    &:nth-child(n + 7) {
-      margin-top: 23px;
+      border-radius: 100% 0 0 100% / 50%;
+      width: 50%;
+      height: 85px;
     }
   }
 
   .is-success {
     .v-step-icon {
-      color: $primary-color;
-      border-color: $primary-color;
+      border-color: $--color-primary;
+      color: $--color-primary;
     }
-    .v-step-line{
-      background-color: $primary-color;
+
+    .v-step-line {
+      background-color: $--color-primary;
+    }
+    .left-circle, .right-circle{
+      border-color: $--color-primary;
     }
   }
 
   .is-process {
     .v-step-icon {
+      border-color: $--color-primary;
       color: #fff;
-      background-color: $primary-color;
-      border-color: $primary-color;
+      background-color: $--color-primary;
     }
   }
 
   .is-wait {
-    .v-step-title{
-      color: #c6cacd;
+    .v-step-title {
+      color: $--color-text-placeholder;
     }
   }
+}
+
+.step-center {
+  display: flex;
+  justify-content: center;
 }
 </style>
